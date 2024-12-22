@@ -1,26 +1,4 @@
-# terraform-Azure-modules
-
-### usags of vnet
-
-module "vnet" {
-    source = ./
-    name = "string"
-    resource_group_name = string 
-    location = string
-    address_space = "0.0.0.0/0"
-    subnet_names         = ["subnet-1", "subnet-2", "subnet-3"]
-
-}
-
-output "vnet_name" {
-  value = module.vnet.vnet_name
-
-}
-output "subnet_ids" {
-  value = module.vnet.subnet_ids
-}
-
-# uses of nsg
+# uses 
 module "nsg" {
   source              = "./modules/nsg"
   nsg_name            = "project-nsg"
@@ -62,39 +40,4 @@ output "nsg_id" {
 }
 output "nsg_name" {
   value = module.nsg.nsg_name.name
-}
-
-## Usage of vm
-
-module "vm" {
-  source = "./test/vm/"
-
-  vm_name        = "project"
-  location       = azurerm_resource_group.RG-Dec.location
-  resource_group = azurerm_resource_group.RG-Dec.name
-  vm_size        = "Standard_B2s"
-  admin_username = "*****"
-  admin_password = "*******"
-
-  subnet_id = module.vnet.subnet_ids[0]
-
-  disable_password_authentication = false
-
-  image_ref = {
-    publisher = "Canonical"
-    offer     = "0001-com-ubuntu-server-jammy"
-    sku       = "22_04-lts-gen2"
-    version   = "latest"
-  }
-
-  tags = {
-    Environment = "Dev"
-    version = "V1.0"
-  }
-}
-
-
-## call modules 
-output "public_ip" {
-    value = module.vm.public_ip
 }
